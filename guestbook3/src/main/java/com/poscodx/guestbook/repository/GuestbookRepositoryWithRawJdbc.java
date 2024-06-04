@@ -1,39 +1,33 @@
 package com.poscodx.guestbook.repository;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.poscodx.guestbook.vo.GuestbookVo;
 
 
 @Repository
-public class GuestbookRepository {
+public class GuestbookRepositoryWithRawJdbc {
+	private DataSource dataSource;
 	
-	private Connection connection() throws SQLException {
-		Connection conn = null;
-		try {
-			Class.forName("org.mariadb.jdbc.Driver");
-			String url = "jdbc:mariadb://192.168.0.192:3306/webdb?charset=utf-8";
-			conn = DriverManager.getConnection(url, "webdb", "webdb");
-		} catch (ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패:"+e);
-		}
-		
-		return conn;
+	public GuestbookRepositoryWithRawJdbc(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 	
 	public boolean insert(GuestbookVo vo) {
 		boolean result = false;
 		
 		try (
-				Connection conn = connection();
+				Connection conn = dataSource.getConnection();
 				) {
 			
 			// 3. Statement 생성하기
@@ -64,7 +58,7 @@ public class GuestbookRepository {
 		boolean result = false;
 		
 		try (
-				Connection conn = connection();
+				Connection conn = dataSource.getConnection();
 				) {
 			
 			// 3. Statement 생성하기
@@ -92,7 +86,7 @@ public class GuestbookRepository {
 		
 		ResultSet rs = null;
 		try (
-				Connection conn = connection();
+				Connection conn = dataSource.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement("select no, name, contents, date_format(reg_date, '%Y-%m-%d %H:%i:%s') as date from guestbook order by date desc");
 				) {
 

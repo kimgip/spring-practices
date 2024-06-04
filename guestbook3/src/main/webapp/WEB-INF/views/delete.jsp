@@ -5,26 +5,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>mysite</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<link href="${pageContext.request.contextPath }/assets/css/guestbook.css" rel="stylesheet" type="text/css">
+<title>방명록</title>
 </head>
 <body>
-	<div id="container">
-		<c:import url="/WEB-INF/views/includes/header.jsp"/>
-		<div id="content">
-			<div id="guestbook" class="delete-form">
-				<form method="post" action="${pageContext.request.contextPath}/delete">
-					<input type='hidden' name="no" value="${no }">
-					<label>비밀번호</label>
-					<input type="password" name="password">
-					<input type="submit" value="확인">
-				</form>
-				<a href="${pageContext.request.contextPath }">방명록 리스트</a>
-			</div>
-		</div>
-		<c:import url="/WEB-INF/views/includes/navigation.jsp"/>
-		<c:import url="/WEB-INF/views/includes/footer.jsp"/>
-	</div>
+	<form method="post" action="${pageContext.request.contextPath}/delete">
+		<input type='hidden' name="no" value="${no }">
+		<table>
+			<tr>
+				<td>비밀번호</td>
+				<td><input type="password" name="password"></td>
+				<td><input type="submit" value="확인"></td>
+			</tr> 
+		</table>
+	</form>
+	<br>
+	<br>
+	<a href="/guestbook1">메인으로 돌아가기</a>
 </body>
 </html>
