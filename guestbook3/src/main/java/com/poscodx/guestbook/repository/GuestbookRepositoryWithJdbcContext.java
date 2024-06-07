@@ -1,5 +1,10 @@
 package com.poscodx.guestbook.repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.poscodx.guestbook.repository.template.JdbcContext;
@@ -14,12 +19,29 @@ public class GuestbookRepositoryWithJdbcContext {
 	}
 	
 	public int insert(GuestbookVo vo) {
-		return jdbcContext.executeUpdate("insert into guestbook values(null, ?, ?, ?, now())", new Object[] {vo.getName(), vo.getPassword(), vo.getContents()});
+		return jdbcContext.update("insert into guestbook values(null, ?, ?, ?, now())", new Object[] {vo.getName(), vo.getPassword(), vo.getContents()});
 
 	}
 	
 	public int deleteByNoAndPassword(Long no, String password) {
-		return jdbcContext.executeUpdate("delete from guestbook where no = ? and password = ?", new Object[] {no, password});
+		return jdbcContext.update("delete from guestbook where no = ? and password = ?", new Object[] {no, password});
 
+	}
+
+	public List<GuestbookVo> findAll() {
+		return jdbcContext.query("select no, name, contents, date_format(reg_date, '%Y-%m-%d %H:%i:%s') as date from guestbook order by date desc",
+			new RowMapper<GuestbookVo>() {
+
+			@Override
+			public GuestbookVo mapRow(ResultSet rs, int rowNum) throws SQLException {
+				GuestbookVo vo = new GuestbookVo();
+				vo.setNo(rs.getLong(1));
+				vo.setName(rs.getString(2));
+				vo.setContents(rs.getString(3));
+				vo.setRegDate(rs.getString(4));
+				return vo;
+			}
+
+});
 	}
 }
