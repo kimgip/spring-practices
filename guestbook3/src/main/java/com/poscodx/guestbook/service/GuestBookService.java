@@ -1,15 +1,17 @@
 package com.poscodx.guestbook.service;
 
-import java.util.List;
-
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.poscodx.guestbook.repository.GuestbookLogRepository;
@@ -23,15 +25,33 @@ public class GuestBookService {
 	private DataSource dataSource;
 	
 	@Autowired
+	private PlatformTransactionManager transactionManager;
+	
+	@Autowired
 	private GuestbookRepositoryWithJdbcContext guestbookRepository;
-
+	
+	@Autowired
 	private GuestbookLogRepository guestbookLogRepository;
+	
 	public List<GuestbookVo> getContentsList() {
 		return guestbookRepository.findAll();
 	}
 	
 	public void deleteContents(Long no, String password) {
-		guestbookRepository.deleteByNoAndPassword(no, password);
+		// TX:BEGIN
+		TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+		try {
+			guestbookLogRepository.update(no);
+			guestbookRepository.deleteByNoAndPassword(no, password);
+		
+			// TX:END(SUCCESS)
+			transactionManager.commit(status);
+		} catch(Throwable e) {
+			// TX:END(FAIL)
+			
+			transactionManager.rollback(status);
+		}
 	}
 	
 	public void addContents(GuestbookVo vo) {

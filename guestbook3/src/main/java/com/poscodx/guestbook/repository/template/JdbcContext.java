@@ -21,6 +21,16 @@ public class JdbcContext {
 		this.dataSource = dataSource;
 	}
 	
+	public int update(String sql) {
+		return executeUpdateWithStatementStrategy(new StatementStrategy() {
+			
+			@Override
+			public PreparedStatement makeStatement(Connection connection) throws SQLException {
+				return connection.prepareStatement(sql);
+			}
+		});
+	}
+	
 	public int update(String sql, Object[] parameters) {
 		return executeUpdateWithStatementStrategy(new StatementStrategy() {
 
