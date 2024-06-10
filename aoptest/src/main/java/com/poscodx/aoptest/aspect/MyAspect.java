@@ -23,14 +23,14 @@ public class MyAspect {
 		System.out.println("---After Advice---");
 	}
 
-	@AfterReturning("execution(* *..*.ProductService.*(..))")
+	@AfterReturning("execution(* *..*.ProductService.*(*))")
 	public void adviceAfterReturning() {
 		System.out.println("---AfterReturning Advice---");
 	}
 	
 	@AfterThrowing(value="execution(* *..*.*.*(..))", throwing="ex")
 	public void adviceAfterThrowing(Throwable ex) {
-		System.out.println("---AfterThrowing Advice " + ex + "---");
+		System.out.println("--- AfterThrowing Advice " + ex + "---");
 	}
 	
 	@Around("execution(* *..*.*.*(..))")
@@ -48,5 +48,4 @@ public class MyAspect {
 		
 		return result;
 	}
-
 }

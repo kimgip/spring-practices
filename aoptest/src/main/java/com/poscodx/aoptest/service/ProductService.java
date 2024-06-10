@@ -11,9 +11,9 @@ public class ProductService {
 		System.out.println("[ProductService] finding...");
 		
 //		if(true) {
-//			throw new RuntimeException("ProductService.find() Exception");
-//		}
-
+//		throw new RuntimeException("ProductService.find() Exception");
+//	}
+		
 		return new ProductVo(name);
 	}
 }
